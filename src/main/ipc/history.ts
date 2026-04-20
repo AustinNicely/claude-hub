@@ -1,9 +1,11 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain, BrowserWindow, shell } from 'electron'
 import { existsSync, readdirSync } from 'fs'
+import { promises as fs } from 'fs'
 import { join } from 'path'
 import { parseJsonlFile } from '../services/jsonl-parser'
 import { getHistoryPath, getProjectsDir } from '../services/path-utils'
 import { FileWatcher } from '../services/file-watcher'
+import { findSessionFileOnDisk } from './session'
 
 interface HistoryEntry {
   display: string
@@ -111,6 +113,30 @@ export async function loadHistory(): Promise<SessionSummary[]> {
 export function registerHistoryIpc(): void {
   ipcMain.handle('get-history', async () => {
     return loadHistory()
+  })
+
+  ipcMain.handle('delete-session', async (_event, sessionId: string) => {
+    const filePath = findSessionFileOnDisk(sessionId)
+    if (filePath) {
+      await fs.unlink(filePath)
+    }
+    const sessions = await loadHistory()
+    for (const win of BrowserWindow.getAllWindows()) {
+      win.webContents.send('history-updated', sessions)
+    }
+  })
+
+  ipcMain.handle('open-project', async (_event, projectPath: string) => {
+    // First check if projectPath is a real filesystem path
+    if (existsSync(projectPath)) {
+      await shell.openPath(projectPath)
+      return
+    }
+    // Fall back to ~/.claude/projects/{projectPath} for scan-only sessions
+    const fallback = join(getProjectsDir(), projectPath)
+    if (existsSync(fallback)) {
+      await shell.openPath(fallback)
+    }
   })
 }
 

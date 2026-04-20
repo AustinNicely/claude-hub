@@ -18,12 +18,16 @@ export function registerTerminalIpc(win: BrowserWindow): void {
     const id = `term-${nextId++}`
     const shell = process.platform === 'win32' ? 'powershell.exe' : process.env.SHELL || '/bin/bash'
 
+    const cleanEnv = { ...process.env }
+    delete cleanEnv.CLAUDECODE
+    delete cleanEnv.CLAUDE_CODE_SESSION
+
     const term = pty.spawn(shell, [], {
       name: 'xterm-256color',
       cols: 80,
       rows: 24,
       cwd: cwd || process.env.HOME || process.env.USERPROFILE || '.',
-      env: process.env as Record<string, string>
+      env: cleanEnv as Record<string, string>
     })
 
     terminals.set(id, term)

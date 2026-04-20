@@ -13,6 +13,8 @@ interface MainPanelProps {
   terminalExitCode: number | null
   onTerminalClose: () => void
   onNewSession: () => void
+  onContinue?: () => void
+  sessionTitle?: string
 }
 
 export function MainPanel({
@@ -24,7 +26,9 @@ export function MainPanel({
   isTerminalRunning,
   terminalExitCode,
   onTerminalClose,
-  onNewSession
+  onNewSession,
+  onContinue,
+  sessionTitle
 }: MainPanelProps) {
   if (viewMode === 'terminal' && terminalId) {
     return (
@@ -58,7 +62,7 @@ export function MainPanel({
           {error}
         </div>
       ) : (
-        <ChatViewer turns={turns} />
+        <ChatViewer turns={turns} onContinue={onContinue} sessionTitle={sessionTitle} />
       )}
     </div>
   )

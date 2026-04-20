@@ -40,7 +40,11 @@ const api = {
     }
     ipcRenderer.on('terminal-exit', handler)
     return () => ipcRenderer.removeListener('terminal-exit', handler)
-  }
+  },
+
+  deleteSession: (sessionId: string): Promise<void> => ipcRenderer.invoke('delete-session', sessionId),
+  openProject: (projectPath: string): Promise<void> => ipcRenderer.invoke('open-project', projectPath),
+  exportSession: (filename: string, markdown: string): Promise<boolean> => ipcRenderer.invoke('export-session', filename, markdown)
 }
 
 contextBridge.exposeInMainWorld('api', api)

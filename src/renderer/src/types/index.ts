@@ -34,6 +34,23 @@ export interface DateGroup {
 
 export type ViewMode = 'chat' | 'terminal' | 'empty'
 
+export type SortMode = 'date' | 'name' | 'messages'
+
+export interface Tag {
+  id: string
+  name: string
+  color: string
+}
+
+export interface PaletteItem {
+  id: string
+  type: 'session' | 'project' | 'action'
+  label: string
+  detail?: string
+  icon?: string
+  action: () => void
+}
+
 export interface ElectronAPI {
   getHistory: () => Promise<SessionSummary[]>
   getSession: (sessionId: string) => Promise<ChatTurn[]>
@@ -44,6 +61,9 @@ export interface ElectronAPI {
   killTerminal: (id: string) => void
   onTerminalData: (callback: (id: string, data: string) => void) => () => void
   onTerminalExit: (callback: (id: string, code: number) => void) => () => void
+  deleteSession: (sessionId: string) => Promise<void>
+  openProject: (projectPath: string) => Promise<void>
+  exportSession: (filename: string, markdown: string) => Promise<boolean>
 }
 
 declare global {

@@ -50,3 +50,23 @@ export function groupByDate(sessions: SessionSummary[]): DateGroup[] {
       sessions: groups.get(label)!
     }))
 }
+
+export function groupByProject(sessions: SessionSummary[]): DateGroup[] {
+  const groups = new Map<string, SessionSummary[]>()
+
+  for (const session of sessions) {
+    const name = session.projectName || 'Unknown Project'
+    if (!groups.has(name)) {
+      groups.set(name, [])
+    }
+    groups.get(name)!.push(session)
+  }
+
+  // Sort projects alphabetically, sessions within each by timestamp (newest first)
+  const sortedKeys = [...groups.keys()].sort((a, b) => a.localeCompare(b))
+
+  return sortedKeys.map((label) => ({
+    label,
+    sessions: groups.get(label)!
+  }))
+}

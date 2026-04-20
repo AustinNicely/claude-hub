@@ -1,5 +1,5 @@
-import { ipcMain } from 'electron'
-import { existsSync, readdirSync } from 'fs'
+import { ipcMain, dialog } from 'electron'
+import { existsSync, readdirSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { parseJsonlFileFiltered } from '../services/jsonl-parser'
 import { getProjectsDir } from '../services/path-utils'
@@ -72,7 +72,7 @@ function attachToolResults(turns: ChatTurn[]): ChatTurn[] {
   return turns
 }
 
-function findSessionFileOnDisk(sessionId: string): string | null {
+export function findSessionFileOnDisk(sessionId: string): string | null {
   const projectsDir = getProjectsDir()
   if (!existsSync(projectsDir)) return null
 
@@ -108,5 +108,18 @@ async function loadSession(sessionId: string): Promise<ChatTurn[]> {
 export function registerSessionIpc(): void {
   ipcMain.handle('get-session', async (_event, sessionId: string) => {
     return loadSession(sessionId)
+  })
+
+  ipcMain.handle('export-session', async (_event, filename: string, markdown: string) => {
+    const result = await dialog.showSaveDialog({
+      defaultPath: filename,
+      filters: [
+        { name: 'Markdown', extensions: ['md'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    })
+    if (result.canceled || !result.filePath) return false
+    writeFileSync(result.filePath, markdown, 'utf-8')
+    return true
   })
 }
