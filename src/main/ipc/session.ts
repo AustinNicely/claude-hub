@@ -25,6 +25,12 @@ interface ContentBlock {
   tool_use_id?: string
   content?: string | ContentBlock[]
   signature?: string
+  source?: {
+    type: string
+    media_type?: string
+    data?: string
+    url?: string
+  }
 }
 
 interface ChatTurn {

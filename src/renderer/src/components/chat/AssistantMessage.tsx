@@ -1,8 +1,9 @@
 import type { ChatTurn } from '../../types'
-import { getTextContent, getThinkingBlocks, getToolUseBlocks } from '../../lib/message-parser'
+import { getTextContent, getThinkingBlocks, getToolUseBlocks, getImageBlocks } from '../../lib/message-parser'
 import { MarkdownRenderer } from './MarkdownRenderer'
 import { ThinkingBlock } from './ThinkingBlock'
 import { ToolUseBlock } from './ToolUseBlock'
+import { ImageBlock } from './ImageBlock'
 import { Sparkles } from 'lucide-react'
 
 interface AssistantMessageProps {
@@ -13,6 +14,7 @@ export function AssistantMessage({ turn }: AssistantMessageProps) {
   const text = getTextContent(turn.content)
   const thinkingBlocks = getThinkingBlocks(turn.content)
   const toolBlocks = getToolUseBlocks(turn.content)
+  const imageBlocks = getImageBlocks(turn.content)
 
   return (
     <div className="flex gap-3">
@@ -30,13 +32,17 @@ export function AssistantMessage({ turn }: AssistantMessageProps) {
           <ToolUseBlock key={i} block={block} />
         ))}
 
+        {imageBlocks.map((block, i) => (
+          <ImageBlock key={`img-${i}`} block={block} />
+        ))}
+
         {text && (
           <div className="text-sm text-gray-200">
             <MarkdownRenderer content={text} />
           </div>
         )}
 
-        {!text && thinkingBlocks.length === 0 && toolBlocks.length === 0 && (
+        {!text && thinkingBlocks.length === 0 && toolBlocks.length === 0 && imageBlocks.length === 0 && (
           <div className="text-sm text-gray-500 italic">(no text content)</div>
         )}
       </div>

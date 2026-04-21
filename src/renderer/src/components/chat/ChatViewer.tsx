@@ -155,7 +155,7 @@ export function ChatViewer({ turns, onContinue, sessionTitle }: ChatViewerProps)
         </div>
 
         {/* Messages */}
-        <div ref={containerRef} className="flex-1 overflow-y-auto">
+        <div ref={containerRef} className="flex-1 overflow-y-auto selectable-content">
           <div className="max-w-4xl mx-auto px-6 py-6 space-y-4">
             {turns.map((turn) => {
               const isMatch = matchTurnIds.has(turn.id)

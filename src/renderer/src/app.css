@@ -35,6 +35,13 @@
   -webkit-app-region: no-drag;
 }
 
+/* Ensure text is selectable in the main content area */
+.selectable-content {
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+}
+
 /* Highlight.js theme overrides for dark mode */
 pre code.hljs {
   background: #1a1a1a !important;

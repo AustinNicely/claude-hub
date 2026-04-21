@@ -19,6 +19,10 @@ export function getToolResultBlocks(blocks: ContentBlock[]): ContentBlock[] {
   return blocks.filter((b) => b.type === 'tool_result')
 }
 
+export function getImageBlocks(blocks: ContentBlock[]): ContentBlock[] {
+  return blocks.filter((b) => b.type === 'image' && b.source)
+}
+
 export function hasOnlyThinking(blocks: ContentBlock[]): boolean {
   return blocks.every((b) => b.type === 'thinking' || b.type === 'tool_use' || b.type === 'tool_result')
 }

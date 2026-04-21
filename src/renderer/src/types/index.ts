@@ -17,6 +17,12 @@ export interface ContentBlock {
   tool_use_id?: string
   content?: string | ContentBlock[]
   signature?: string
+  source?: {
+    type: 'base64' | 'url'
+    media_type?: string
+    data?: string
+    url?: string
+  }
 }
 
 export interface ChatTurn {
